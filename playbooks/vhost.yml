@@ -1,8 +1,0 @@
----
-
-- name: "Add SSL Enabled vHost"
-  hosts: "{{host|default('vhost')}}"
-  become: yes
-
-  roles:
-    - vhost
