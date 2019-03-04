@@ -2,12 +2,7 @@
 
 # all:
 #   vars:
-#     ansible_port: 22
-#     ansible_user: "root"
-# 
-#     timezone: "Europe/Berlin"
-#     nginx_log_retention_days: "7"
-#     postfix_root_alias_email: "ansible@example.com"
+#     postfix_root_alias_email: "admin@example.com"
 
 #   hosts:
 #     test.example.com:
