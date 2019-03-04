@@ -1,0 +1,29 @@
+---
+
+- name: "Set Hostname"
+  hostname:
+    name: "{{inventory_hostname}}"
+
+- name: "Set Timezone"
+  timezone:
+    name: "{{timezone}}"
+  when: timezone is defined
+
+- name: "Install Packages"
+  apt:
+    name: "{{packages}}"
+    update_cache: yes
+  vars:
+    packages:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - fail2ban
+      - git
+      - gnupg2
+      - ntp
+      - python-openssl
+      - python-pip
+      - rsync
+      - software-properties-common
+      - vim

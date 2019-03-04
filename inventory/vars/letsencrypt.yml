@@ -1,0 +1,12 @@
+---
+
+all:
+  vars:
+    letsencrypt_directory: "https://acme-v02.api.letsencrypt.org/directory"
+    letsencrypt_directory_staging: "https://acme-staging-v02.api.letsencrypt.org/directory"
+    letsencrypt_ssl_root: "/etc/ssl/letsencrypt"
+    letsencrypt_challenge_root: "/var/www/letsencrypt"
+    letsencrypt_account_key: "{{letsencrypt_ssl_root}}/account.key"
+    letsencrypt_force_renewal: no
+
+

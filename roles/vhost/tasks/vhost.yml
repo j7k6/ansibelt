@@ -1,0 +1,13 @@
+---
+
+- name: "Resolve Dependecies"
+  include_tasks: dependencies.yml
+
+- name: "Initialize Variables"
+  include_tasks: vars.yml
+
+- name: "Install Let's Encrypt SSL Certificates"
+  include_tasks: letsencrypt.yml
+
+- name: "Nginx Config"
+  include_tasks: nginx.yml

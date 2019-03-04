@@ -1,0 +1,41 @@
+---
+
+- name: "Create Site Root"
+  file:
+    path: "{{nginx_site_root}}"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+
+- name: "Generate .htpasswd File"
+  htpasswd:
+    path: "/etc/nginx/{{server_name[0]}}.htpassw"
+    name: "{{basic_auth_user}}"
+    password: "{{basic_auth_pass}}"
+  when: basic_auth_user != "" and basic_auth_pass != ""
+
+- name: "Copy Site Config"
+  template:
+    src: "site.conf.j2"
+    dest: "/etc/nginx/sites-available/{{server_name[0]}}.conf"
+    mode: 0644
+    force: "{{nginx_force_override}}"
+
+- name: "Copy Custom Site Config"
+  template:
+    src: "custom_sites/{{server_name[0]}}.conf.j2"
+    dest: "/etc/nginx/sites-available/{{server_name[0]}}.conf"
+    mode: 0644
+    force: yes
+  ignore_errors: yes
+
+- name: "Symlink Site Config"
+  file:
+    src: "/etc/nginx/sites-available/{{server_name[0]}}.conf"
+    dest: "/etc/nginx/sites-enabled/{{server_name[0]}}.conf"
+    state: link
+
+- name: "Reload Nginx Config"
+  service:
+    name: "nginx"
+    state: reloaded

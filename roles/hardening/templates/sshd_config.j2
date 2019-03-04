@@ -1,0 +1,7 @@
+Port {{ansible_port|default('22')}}
+PermitRootLogin prohibit-password
+PasswordAuthentication no
+ChallengeResponseAuthentication no
+UseDNS no
+UsePAM yes
+Subsystem sftp /usr/lib/openssh/sftp-server

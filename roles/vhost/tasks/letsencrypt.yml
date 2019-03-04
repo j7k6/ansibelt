@@ -1,0 +1,82 @@
+---
+
+- name: "Set Let's Encrypt Directory"
+  set_fact:
+    letsencrypt_directory: "{{letsencrypt_directory_staging}}"
+  when: staging == True
+
+- name: "Create Let's Encrypt Directories"
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - "{{letsencrypt_challenge_root}}/.well-known/acme-challenge"
+    - "{{letsencrypt_ssl_root}}"
+    - "{{letsencrypt_ssl_root}}/{{server_name[0]}}"
+
+- name: "Create Let's Encrypt Account Private Key"
+  openssl_privatekey:
+    path: "{{letsencrypt_account_key}}"
+    mode: 0600
+
+- name: "Create Domain Private Key"
+  openssl_privatekey:
+    path: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/privkey.pem"
+    mode: 0600
+
+- name: "Create Domain CSR"
+  openssl_csr:
+    path: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/csr.pem"
+    privatekey_path: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/privkey.pem"
+    common_name: "{{server_name[0]}}"
+    subject_alt_name: "{{item.value | map('regex_replace', '^', 'DNS:') | list}}"
+    force: yes
+  with_dict:
+    dns_server: "{{server_name}}"
+
+- name: "Request Let's Encrypt Challenge"
+  acme_certificate:
+    acme_version: 2
+    acme_directory: "{{letsencrypt_directory}}"
+    terms_agreed: yes
+    force: "{{letsencrypt_force_renewal}}"
+    account_key_src: "{{letsencrypt_account_key}}"
+    csr: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/csr.pem"
+    fullchain_dest: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/fullchain.pem"
+    chain_dest: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/chain.pem"
+  register: acme_challenge
+
+- name: "Create Challenge File"
+  copy:
+    dest: "{{letsencrypt_challenge_root}}/{{item['value']['http-01']['resource']}}"
+    content: "{{item['value']['http-01']['resource_value']}}"
+  with_dict: "{{acme_challenge['challenge_data']}}"
+  when: acme_challenge is changed
+
+- name: "Request Let's Encrypt Certificate"
+  acme_certificate:
+    acme_version: 2
+    acme_directory: "{{letsencrypt_directory}}"
+    terms_agreed: yes
+    force: "{{letsencrypt_force_renewal}}"
+    account_key_src: "{{letsencrypt_account_key}}"
+    csr: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/csr.pem"
+    fullchain_dest: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/fullchain.pem"
+    chain_dest: "{{letsencrypt_ssl_root}}/{{server_name[0]}}/chain.pem"
+    data: "{{acme_challenge}}"
+  when: acme_challenge is changed
+
+- name: "Delete Challenge File"
+  file:
+    path: "{{letsencrypt_challenge_root}}/{{item['value']['http-01']['resource']}}"
+    state: absent
+  with_dict: "{{acme_challenge['challenge_data']}}"
+  when: acme_challenge is changed
+  ignore_errors: yes
+
+- name: "Add Certificate Renewl Cronjob"
+  cron:
+    name: "renew certs"
+    special_time: weekly
+    user: "root"
+    job: "/usr/local/bin/acme-tiny --account-key {{letsencrypt_account_key}} --csr {{letsencrypt_ssl_root}}/{{server_name[0]}}/csr.pem --acme-dir {{letsencrypt_challenge_root}}/.well-known/acme-challenge/ > {{letsencrypt_ssl_root}}/{{server_name[0]}}/fullchain.pem 2>> /var/log/acme_tiny.log && systemctl reload nginx"

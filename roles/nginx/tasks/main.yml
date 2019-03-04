@@ -1,0 +1,70 @@
+---
+
+- name: "Add Nginx Repository (Debian)"
+  block:
+  - name: "Add Nginx Signing Key (Debian)"
+    apt_key:
+      url: "https://nginx.org/keys/nginx_signing.key"
+
+  - name: "Add Nginx Repository (Debian)"
+    apt_repository:
+      repo: "deb http://nginx.org/packages/debian {{ansible_distribution_release}} nginx"
+      filename: "nginx"
+      update_cache: yes
+  when: ansible_distribution == "Debian"
+
+- name: "Add Nginx Repository (Ubuntu)"
+  block:
+  - name: "Add Nginx PPA (Ubuntu)"
+    apt_repository:
+      repo: "ppa:nginx/stable"
+      update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: "Install Nginx"
+  apt:
+    name: "nginx"
+    update_cache: yes
+
+- name: "Copy nginx.conf"
+  synchronize:
+    src: "files/nginx.conf"
+    dest: "/etc/nginx/nginx.conf"
+
+- name: "Copy conf.d/"
+  synchronize:
+    src: "files/conf.d/"
+    dest: "/etc/nginx/conf.d/"
+
+- name: "Create Nginx directories"
+  file:
+    path: "{{item}}"
+    state: directory
+  with_items:
+    - "/etc/nginx/sites-available"
+    - "/etc/nginx/sites-enabled"
+
+- name: "Copy sites-available/000-default.conf"
+  synchronize:
+    src: "files/000-default.conf"
+    dest: "/etc/nginx/sites-available/000-default.conf"
+
+- name: "Symlink 000-default.conf"
+  file:
+    src: "/etc/nginx/sites-available/000-default.conf"
+    dest: "/etc/nginx/sites-enabled/000-default.conf"
+    state: link
+
+- name: "Restart Nginx Service"
+  service:
+    name: "nginx"
+    state: restarted
+
+- name: "Logrotate Config"
+  template:
+    src: "logrotate.j2"
+    dest: "/etc/logrotate.d/nginx"
+    force: yes
+
+- name: "Include Firewall Rules"
+  include_tasks: firewall.yml

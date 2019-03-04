@@ -1,0 +1,29 @@
+---
+
+- name: "Install Packages"
+  apt:
+    name: "{{packages}}"
+    update_cache: yes
+  vars:
+    packages:
+      - postfix
+      - mailutils
+
+- name: "Add Postfix Null Client Config"
+  template:
+    src: "main.cf.j2"
+    dest: "/etc/postfix/main.cf"
+    force: yes
+
+- name: "Add Root Alias Email Address"
+  lineinfile:
+    path: "/etc/aliases"
+    line: "root: {{postfix_root_alias_email}}"
+
+- name: "Refresh Alias DB"
+  command: "newaliases"
+
+- name: "Restart Postfix Service"
+  service:
+    name: "postfix"
+    state: restarted

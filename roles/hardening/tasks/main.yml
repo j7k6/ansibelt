@@ -1,0 +1,29 @@
+---
+
+- name: "Disable IPv6"
+  sysctl:
+    name: "{{item}}"
+    value: 1
+  with_items:
+    - net.ipv6.conf.all.disable_ipv6
+    - net.ipv6.conf.default.disable_ipv6
+    - net.ipv6.conf.lo.disable_ipv6
+
+- name: "Add hardened sshd_config"
+  template:
+    src: "sshd_config.j2"
+    dest: "/etc/ssh/sshd_config"
+    force: yes
+
+- name: "Restart SSH Service"
+  service:
+    name: "ssh"
+    state: restarted
+
+- name: "Add fail2ban Config"
+  template:
+    src: "jail.local.j2"
+    dest: "/etc/fail2ban/jail.local"
+    owner: root
+    group: root
+    mode: 0644

@@ -1,0 +1,14 @@
+---
+
+- name: "Install Packages"
+  apt:
+    name: "unattended-upgrades"
+    update_cache: yes
+
+- name: "Configure Unattended Upgrades"
+  copy:
+    src: "{{item}}"
+    dest: "/etc/apt.conf.d/"
+  with_fileglob:
+    - "*"
+

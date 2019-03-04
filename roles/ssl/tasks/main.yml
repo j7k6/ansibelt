@@ -1,0 +1,23 @@
+---
+
+- name: "Create Snakeoil Private Key"
+  openssl_privatekey:
+    path: "/etc/ssl/private/snakeoil.key"
+    mode: 0600
+
+- name: "Create Snakeoil CSR"
+  openssl_csr:
+    path: "/etc/ssl/certs/snakeoil.csr"
+    privatekey_path: "/etc/ssl/private/snakeoil.key"
+
+- name: "Create Snakeoil Certificate"
+  openssl_certificate:
+    path: "/etc/ssl/certs/snakeoil.pem"
+    privatekey_path: "/etc/ssl/private/snakeoil.key"
+    csr_path: "/etc/ssl/certs/snakeoil.csr"
+    provider: selfsigned
+
+- name: "Generate dhparams"
+  openssl_dhparam:
+    path: "/etc/ssl/certs/dhparam.pem"
+    size: 2048

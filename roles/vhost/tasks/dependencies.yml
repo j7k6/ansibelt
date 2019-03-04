@@ -1,0 +1,5 @@
+---
+
+- name: "Install Python Libraries"
+  pip:
+    name: ["acme-tiny", "passlib"]

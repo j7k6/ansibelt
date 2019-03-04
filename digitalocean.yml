@@ -1,0 +1,46 @@
+---
+
+- name: "Deploy Digitalocean Droplet"
+  hosts: localhost
+  gather_facts: False
+
+  tasks:
+    - name: "Add SSH Public Key"
+      digital_ocean_sshkey:
+        oauth_token: "{{digitalocean_token}}"
+        ssh_pub_key: "{{digitalocean_ssh_pub_key}}"
+        name: "ansible"
+      register: do_key
+
+    - name: "Create Droplets"
+      digital_ocean:
+        command: droplet
+        state: present
+        name: "{{item.name}}"
+        api_token: "{{digitalocean_token}}"
+        size_id: "{{item.size}}"
+        region_id: "fra1"
+        ssh_key_ids: "{{do_key.data.ssh_key.id}}"
+        image_id: "{{item.image}}"
+        unique_name: yes
+        backups_enabled: "{{item.backups|default(False)}}"
+      with_items: "{{digitalocean_droplets}}"
+      register: droplets
+
+    - name: "Prepare Inventory File"
+      lineinfile:
+        dest: "inventory/digitalocean.yml"
+        line: "      hosts:"
+
+    - name: "Add Droplet to Inventory"
+      lineinfile:
+        dest: "inventory/digitalocean.yml"
+        line: "        {{item.droplet.name}}:"
+      with_items: "{{droplets.results}}"
+
+    - name: "Add Droplet Host Address to Inventory"
+      lineinfile:
+        dest: "inventory/digitalocean.yml"
+        line: "          ansible_host: \"{{item.droplet.networks.v4[0].ip_address}}\""
+        insertafter: "        {{item.droplet.name}}:"
+      with_items: "{{droplets.results}}"

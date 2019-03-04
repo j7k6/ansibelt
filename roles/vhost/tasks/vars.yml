@@ -1,0 +1,14 @@
+---
+
+- name: "Assign Site Vars"
+  set_fact:
+    staging: "{{site.staging|default(False)}}"
+    server_name: "{{site.server_name}}"
+    proxy_host: "{{site.proxy_host|default('http://127.0.0.1')}}"
+    proxy_port: "{{site.proxy_port|default('')}}"
+    basic_auth_realm: "{{site.basic_auth_realm|default('Restricted')}}"
+    basic_auth_user: "{{site.basic_auth_user|default('')}}"
+    basic_auth_pass: "{{site.basic_auth_pass|default('')}}"
+    letsencrypt_force_renewal: "{{site.force|default(False)}}"
+    nginx_site_root: "{{site_root|default('/var/www/{{server_name[0]}}')}}"
+    nginx_force_override: "{{site.force|default(False)}}"

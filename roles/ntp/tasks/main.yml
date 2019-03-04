@@ -1,0 +1,28 @@
+---
+
+- name: "Install ntp"
+  apt:
+    name: "ntp"
+    update_cache: yes
+
+- name: "Stop NTP Service"
+  service:
+    name: "ntp"
+    state: stopped
+
+- name: "Copy ntp.conf"
+  copy:
+    src: "ntp.conf"
+    dest: "/etc/ntp.conf"
+    force: yes
+
+- name: "Sync NTP"
+  command: "ntpd -gq"
+
+- name: "Enable Systemd NTP Sync"
+  command: "timedatectl set-ntp true"
+
+- name: "Start NTP Service"
+  service:
+    name: "ntp"
+    state: started

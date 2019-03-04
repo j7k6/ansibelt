@@ -1,0 +1,8 @@
+---
+
+- name: "Loop over Sites"
+  include: vhost.yml
+  loop: "{{sites}}"
+  loop_control:
+    loop_var: site
+  when: sites is defined

@@ -1,0 +1,6 @@
+---
+
+# all:
+#   vars:
+#     digitalocean_token: "c02b7d24a066adb747fdeb12deb21bfa"
+#     digitalocean_ssh_pub_key: "{{lookup('file', '~/.ssh/id_rsa.pub')}}"

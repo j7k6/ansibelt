@@ -1,0 +1,19 @@
+server {
+  server_name {{server_name|join(' ')}};
+  
+  include conf.d/common.conf;
+  include conf.d/ssl.conf;
+
+  ssl_certificate {{letsencrypt_ssl_root}}/{{server_name[0]}}/fullchain.pem;
+  ssl_certificate_key {{letsencrypt_ssl_root}}/{{server_name[0]}}/privkey.pem;
+  ssl_trusted_certificate {{letsencrypt_ssl_root}}/{{server_name[0]}}/chain.pem;
+
+  access_log /var/log/nginx/{{server_name[0]}}.log combined if=$loggable;
+
+  root /var/www/{{server_name[0]}};
+
+  location /wordpress {
+    include conf.d/proxy.conf;
+    proxy_pass http://127.0.0.1:9000;
+  }
+}

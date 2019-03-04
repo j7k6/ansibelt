@@ -1,0 +1,26 @@
+---
+
+- name: "Add iptables Rules (Debian)"
+  block:
+    - name: "Add Default Firewall Rules"
+      command: "iptables -I INPUT -p tcp -m tcp --dport {{item}} -j ACCEPT"
+      with_items:
+        - 80
+        - 443
+    
+    - name: "Make Firewall Rules Persistent"
+      shell: "iptables-save > /etc/iptables/rules.v4"
+  when: ansible_distribution == "Debian"
+
+- name: "Add ufw Rules (Ubuntu)"
+  block:
+    - name: "Allow Incoming Ports"
+      ufw:
+        rule: allow
+        proto: tcp
+        port: "{{item}}"
+      with_items:
+        - 80
+        - 443
+  when: ansible_distribution == "Ubuntu"
+

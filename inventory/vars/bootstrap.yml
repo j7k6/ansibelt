@@ -1,0 +1,6 @@
+---
+
+all:
+  vars:
+    timezone: "Europe/Berlin"
+    nginx_log_retention_days: "7"

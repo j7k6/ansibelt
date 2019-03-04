@@ -1,0 +1,34 @@
+---
+
+# all:
+#   vars:
+#     ansible_port: 22
+#     ansible_user: "root"
+# 
+#     timezone: "Europe/Berlin"
+#     nginx_log_retention_days: "7"
+#     postfix_root_alias_email: "ansible@example.com"
+
+#   hosts:
+#     test.example.com:
+#       ansible_host: "203.0.113.10"
+#       ansible_user: "ansible"
+#       sites:
+#         - { server_name: ["www.example.com", "example.com"] }
+#         - { server_name: ["staging.example.com"],
+#             force: True,
+#             staging: True,
+#             proxy_port: 8080, 
+#             basic_auth_user: "test", 
+#             basic_auth_pass: "test" }
+
+#   children:
+#     bootstrap:
+#       hosts:
+#         test.example.com:
+#     stack:
+#       hosts:
+#         test.example.com:
+#     vhost:
+#       hosts:
+#         test.example.com:

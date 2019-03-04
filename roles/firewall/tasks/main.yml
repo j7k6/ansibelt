@@ -1,0 +1,70 @@
+---
+
+- name: "iptables (Debian)"
+  block:
+    - name: "Install iptables-persistent"
+      apt:
+        name: "iptables-persistent"
+        update_cache: yes
+
+    - name: "Add Default Firewall Rules"
+      command: "iptables {{item}}"
+      with_items:
+        - -P INPUT ACCEPT
+        - -P OUTPUT ACCEPT
+        - -P FORWARD ACCEPT
+        - -F
+        - -X
+        - -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+        - -A INPUT -i lo -j ACCEPT
+        - -A INPUT -p icmp -j ACCEPT
+        - -A INPUT -p tcp -m state --state NEW -m tcp --dport {{ansible_port}} -j ACCEPT
+        - -A INPUT -j DROP
+        - -A FORWARD -j DROP
+        - -A OUTPUT -j ACCEPT
+
+    - name: "Allow Custom Incoming Ports"
+      command: "iptables -I INPUT -p tcp -m {{item.proto}} --dport {{item.port}} -j ACCEPT"
+      with_items: "{{ports}}"
+      when: ports is defined
+
+    - name: "Make Firewall Rules Persistent"
+      shell: "iptables-save > /etc/iptables/rules.v4"
+  when: ansible_distribution == "Debian"
+
+- name: "ufw (Ubuntu)"
+  block:
+    - name: "Install ufw Package"
+      apt:
+        name: "ufw"
+        update_cache: yes
+
+    - name: "Configure Firewall (Default-in)"
+      ufw:
+        direction: incoming
+        policy: deny
+
+    - name: "Configure Firewall (Default-out)"
+      ufw:
+        direction: outgoing
+        policy: allow
+
+    - name: "Allow SSH Ports"
+      ufw:
+        rule: allow
+        proto: tcp
+        port: "{{ansible_port}}"
+
+    - name: "Allow Custom Incoming Ports"
+      ufw:
+        rule: allow
+        proto: "{{item.proto}}"
+        port: "{{item.port}}"
+      with_items: "{{ports}}"
+      when: ports is defined
+
+    - name: "Enable ufw"
+      ufw:
+        state: enabled
+  when: ansible_distribution == "Ubuntu"
+
