@@ -3,8 +3,8 @@
 # all:
 #  vars:
 #    digitalocean_droplets:
-#      - { name: "web", size: "1gb", image: "ubuntu-18-04-x64" }
-#      - { name: "mail", size: "1gb", image: "debian-9-x64" }
+#      - { name: "web.example.com", size: "1gb", image: "ubuntu-18-04-x64" }
+#      - { name: "mail.example.com", size: "1gb", image: "debian-9-x64" }
 
 #  children:
 #    digitalocean:

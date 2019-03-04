@@ -1,7 +1,7 @@
 ---
 
 - name: "Bootstrap Debian/Ubuntu Server"
-  hosts: bootstrap
+  hosts: "{{host|default('bootstrap')}}"
   gather_facts: False
   become: yes
   pre_tasks:

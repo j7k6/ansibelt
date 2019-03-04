@@ -1,5 +1,12 @@
 ---
 
+- name: "Disable Managed /etc/hosts on DigitalOcean Hosts"
+  lineinfile:
+    dest: "/etc/cloud/cloud.cfg"
+    regex: '^manage_etc_hosts:\strue'
+    line: 'manage_etc_hosts: false'
+  when: inventory_hostname in groups['digitalocean']
+
 - name: "Set Hostname"
   hostname:
     name: "{{inventory_hostname}}"
