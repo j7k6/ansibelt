@@ -1,0 +1,10 @@
+---
+
+- name: "Install Nginx/Docker Stack on Server"
+  hosts: "{{host|default('stack')}}"
+  become: yes
+
+  roles:
+    - ssl
+    - nginx
+    - docker
