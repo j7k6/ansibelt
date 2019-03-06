@@ -18,7 +18,7 @@
 - name: "Add Root Alias Email Address"
   lineinfile:
     path: "/etc/aliases"
-    line: "root: {{postfix_root_alias_email}}"
+    line: "root: {{admin_email}}"
 
 - name: "Refresh Alias DB"
   command: "newaliases"

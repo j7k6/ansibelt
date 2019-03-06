@@ -21,6 +21,10 @@
       update_cache: yes
   when: ansible_distribution == "Ubuntu"
 
+- name: "Install Python Packages"
+  pip:
+    name: ["passlib"]
+
 - name: "Install Nginx"
   apt:
     name: "nginx"

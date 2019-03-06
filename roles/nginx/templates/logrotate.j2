@@ -2,6 +2,7 @@
 	daily
 	rotate {{nginx_log_retention_days}}
   shred
+  sharedscripts
 	postrotate
 		invoke-rc.d nginx rotate >/dev/null 2>&1
 	endscript

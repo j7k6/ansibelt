@@ -2,14 +2,16 @@
 
 # all:
 #   vars:
-#     postfix_root_alias_email: "admin@example.com"
+#     admin_email: "admin@example.com"
+#     cloudflare_email: "admin@example.com"
+#     cloudflare_api_key: "c02b7d24a066adb747fdeb12deb21bfa"
 
 #   hosts:
 #     test.example.com:
 #       ansible_host: "203.0.113.10"
 #       ansible_user: "ansible"
 #       sites:
-#         - { server_name: ["www.example.com", "example.com"] }
+#         - { server_name: ["example.com", "*.example.com"], cloudflare_zone: "example.com" }
 #         - { server_name: ["staging.example.com"],
 #             force: True,
 #             staging: True,

@@ -1,0 +1,13 @@
+---
+
+- name: "Set Cloudflare DNS Records"
+  cloudflare_dns:
+    zone: "{{cloudflare_zone}}"
+    type: A
+    record: "{{item}}"
+    value: "{{ansible_default_ipv4.address}}"
+    account_email: "{{cloudflare_email}}"
+    account_api_token: "{{cloudflare_api_key}}"
+  with_items: "{{server_name}}"
+  when: cloudflare_zone != None
+  ignore_errors: yes

@@ -5,9 +5,9 @@ server {
   include conf.d/ssl.conf;
   include conf.d/sslmodern.conf;
 
-  ssl_certificate {{letsencrypt_ssl_root}}/{{server_name[0]}}/fullchain.pem;
-  ssl_certificate_key {{letsencrypt_ssl_root}}/{{server_name[0]}}/privkey.pem;
-  ssl_trusted_certificate {{letsencrypt_ssl_root}}/{{server_name[0]}}/chain.pem;
+  ssl_certificate /etc/letsencrypt/live/{{server_name[0]}}/fullchain.pem;
+  ssl_certificate_key /etc/letsencrypt/live/{{server_name[0]}}/privkey.pem;
+  ssl_trusted_certificate /etc/letsencrypt/live/{{server_name[0]}}/chain.pem;
 
   access_log /var/log/nginx/{{server_name[0]}}.log combined if=$loggable;
 

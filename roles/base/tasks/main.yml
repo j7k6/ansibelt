@@ -5,7 +5,7 @@
     dest: "/etc/cloud/cloud.cfg"
     regex: '^manage_etc_hosts:\strue'
     line: 'manage_etc_hosts: false'
-  when: inventory_hostname in groups['digitalocean']
+  when: groups['digitalocean'] is defined and inventory_hostname in groups['digitalocean']
 
 - name: "Set Hostname"
   hostname:

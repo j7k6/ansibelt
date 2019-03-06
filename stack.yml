@@ -8,3 +8,4 @@
     - ssl
     - nginx
     - docker
+    - certbot

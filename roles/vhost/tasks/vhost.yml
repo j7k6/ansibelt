@@ -1,13 +1,13 @@
 ---
 
-- name: "Resolve Dependecies"
-  include_tasks: dependencies.yml
-
-- name: "Initialize Variables"
+- name: "Variables"
   include_tasks: vars.yml
 
-- name: "Install Let's Encrypt SSL Certificates"
+- name: "Cloudflare DNS"
+  include_tasks: cloudflare.yml
+
+- name: "Let's Encrypt"
   include_tasks: letsencrypt.yml
 
-- name: "Nginx Config"
+- name: "Nginx"
   include_tasks: nginx.yml
