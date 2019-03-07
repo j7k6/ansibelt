@@ -2,6 +2,6 @@ compatibility_level = 2
 myhostname = {{inventory_hostname}}
 mydestination = {{inventory_hostname}}, localhost, localhost.localdomain
 relayhost =
-mynetworks = 127.0.0.0/8
+mynetworks = 127.0.0.0/8, {{ansible_default_ipv4.address}}/32
 inet_interfaces = loopback-only
 inet_protocols = ipv4

@@ -7,6 +7,11 @@
     line: 'manage_etc_hosts: false'
   when: groups['digitalocean'] is defined and inventory_hostname in groups['digitalocean']
 
+- name: "Add /etc/hosts Entry"
+  lineinfile:
+    dest: "/etc/hosts"
+    line: "{{ansible_default_ipv4.address}}\t {{inventory_hostname}}"
+
 - name: "Set Hostname"
   hostname:
     name: "{{inventory_hostname}}"
