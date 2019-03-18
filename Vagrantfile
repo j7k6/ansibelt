@@ -7,6 +7,10 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "ansible" do |ansible|
     ansible.playbook = "bootstrap.yml"
+    ansible.extra_vars = {
+      vagrant: true,
+      host: "default"
+    }
   end
 end
 

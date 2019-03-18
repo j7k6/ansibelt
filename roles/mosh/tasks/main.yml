@@ -1,0 +1,10 @@
+---
+
+- name: "Install Mosh"
+  apt:
+    name: "mosh"
+    update_cache: yes
+
+- name: "Include Firewall Rules"
+  include_tasks: firewall.yml
+

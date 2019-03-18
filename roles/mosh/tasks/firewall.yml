@@ -2,17 +2,12 @@
 
 - name: "Add iptables Rules (Debian)"
   block:
-    - name: "Allow HTTP/S"
+    - name: "Allow Mosh Ports"
       iptables:
         chain: INPUT
-        protocol: tcp
-        destination_port: "{{item}}"
-        ctstate: NEW
-        syn: match
+        protocol: udp
+        destination_port: "60000:61000"
         jump: ACCEPT
-      with_items:
-        - 80
-        - 443
     
     - name: "Make Firewall Rules Persistent"
       shell: "iptables-save > /etc/iptables/rules.v4"
@@ -20,13 +15,11 @@
 
 - name: "Add ufw Rules (Ubuntu)"
   block:
-    - name: "Allow HTTP/S"
+    - name: "Allow Mosh Ports"
       ufw:
         rule: allow
-        proto: tcp
-        port: "{{item}}"
-      with_items:
-        - 80
-        - 443
+        proto: udp
+        port: "60000:61000"
   when: ansible_distribution == "Ubuntu"
+
 

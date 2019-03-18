@@ -19,9 +19,11 @@
   lineinfile:
     path: "/etc/aliases"
     line: "root: {{admin_email}}"
+  when: admin_email is defined
 
 - name: "Refresh Alias DB"
   command: "newaliases"
+  when: admin_email is defined
 
 - name: "Restart Postfix Service"
   service:

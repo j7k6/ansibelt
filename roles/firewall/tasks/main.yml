@@ -7,26 +7,52 @@
         name: "iptables-persistent"
         update_cache: yes
 
-    - name: "Add Default Firewall Rules"
-      command: "iptables {{item}}"
-      with_items:
-        - -P INPUT ACCEPT
-        - -P OUTPUT ACCEPT
-        - -P FORWARD ACCEPT
-        - -F
-        - -X
-        - -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
-        - -A INPUT -i lo -j ACCEPT
-        - -A INPUT -p icmp -j ACCEPT
-        - -A INPUT -p tcp -m state --state NEW -m tcp --dport {{ansible_port}} -j ACCEPT
-        - -A INPUT -j DROP
-        - -A FORWARD -j DROP
-        - -A OUTPUT -j ACCEPT
+    - name: "Flush all Rules"
+      iptables:
+        flush: yes
+
+    - name: "Allow Establishe/Related Connections"
+      iptables:
+        chain: INPUT
+        ctstate: ESTABLISHED,RELATED
+        jump: ACCEPT
+
+    - name: "Allow Localhost"
+      iptables:
+        chain: INPUT
+        in_interface: "lo"
+        jump: ACCEPT
+
+    - name: "Allow ICMP"
+      iptables:
+        chain: INPUT
+        protocol: icmp
+        jump: ACCEPT
+
+    - name: "Allow SSH"
+      iptables:
+        chain: INPUT
+        protocol: tcp
+        destination_port: "{{ansible_port}}"
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
 
     - name: "Allow Custom Incoming Ports"
-      command: "iptables -I INPUT -p tcp -m {{item.proto}} --dport {{item.port}} -j ACCEPT"
+      iptables:
+        chain: INPUT
+        protocol: "{{item.proto}}"
+        destination_port: "{{item.port}}"
+        ctstate: NEW
+        syn: match
+        jump: ACCEPT
       with_items: "{{ports}}"
       when: ports is defined
+
+    - name: "Drop All Incoming"
+      iptables:
+        chain: INPUT
+        policy: DROP
 
     - name: "Make Firewall Rules Persistent"
       shell: "iptables-save > /etc/iptables/rules.v4"
@@ -49,7 +75,7 @@
         direction: outgoing
         policy: allow
 
-    - name: "Allow SSH Ports"
+    - name: "Allow SSH Port"
       ufw:
         rule: allow
         proto: tcp
@@ -67,4 +93,3 @@
       ufw:
         state: enabled
   when: ansible_distribution == "Ubuntu"
-

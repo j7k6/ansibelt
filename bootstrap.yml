@@ -12,11 +12,12 @@
 
   roles:
     - base
+    - firewall
     - unattended-upgrades
     - ntp
     - postfix
+    - mosh
     - hardening
-    - firewall
 
   tasks:
     - name: "Send Mail after Bootstrap"
