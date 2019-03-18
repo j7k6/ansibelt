@@ -33,6 +33,7 @@
       - fail2ban
       - git
       - gnupg2
+      - logwatch
       - ntp
       - open-vm-tools
       - python-openssl
