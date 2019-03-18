@@ -7,6 +7,11 @@
         name: "iptables-persistent"
         update_cache: yes
 
+    - name: "Allow All Incoming"
+      iptables:
+        chain: INPUT
+        policy: ACCEPT
+
     - name: "Flush all Rules"
       iptables:
         flush: yes

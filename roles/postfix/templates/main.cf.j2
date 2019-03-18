@@ -1,7 +1,17 @@
 compatibility_level = 2
 myhostname = {{inventory_hostname}}
 mydestination = {{inventory_hostname}}, localhost, localhost.localdomain
-relayhost =
 mynetworks = 127.0.0.0/8, {{ansible_default_ipv4.address}}/32
 inet_interfaces = loopback-only
 inet_protocols = ipv4
+
+{% if postfix_smtp_server %}
+relayhost = [{{postfix_smtp_server}}]:{{postfix_smtp_port|default(587)}}
+{% if postfix_smtp_username %}
+smtp_sasl_auth_enable = yes
+smtp_sasl_password_maps = static:{{postfix_smtp_username}}:{{postfix_smtp_password}}
+smtp_sasl_security_options = noanonymous
+{% endif %}
+{% else %}
+relayhost =
+{% endif %}

@@ -15,6 +15,12 @@
     dest: "/etc/postfix/main.cf"
     force: yes
 
+- name: "Remove Existing Root Alias"
+  lineinfile:
+    path: "/etc/aliases"
+    regexp: '^root'
+    state: absent
+
 - name: "Add Root Alias Email Address"
   lineinfile:
     path: "/etc/aliases"
