@@ -47,7 +47,7 @@
   register: gpg_key_exists
 
 - name: "Generate GPG Key Pair"
-  command: 'gpg2 --batch --gen-key /tmp/gpg_template'
+  shell: "echo '' | gpg2 --pinentry-mode=loopback --passphrase-fd=0 --batch --gen-key /tmp/gpg_template"
   when: gpg_key_exists.stdout == ""
 
 - name: "Register GPG Key ID"
@@ -59,10 +59,10 @@
   command: "duply {{backup}} create"
   ignore_errors: yes
 
-- name: "Copy excludes"
+- name: "Copy exclude"
   copy:
-    src: "excludes"
-    dest: "/root/.duply/{{backup}}/excludes"
+    src: "exclude"
+    dest: "/root/.duply/{{backup}}/exclude"
     force: yes
 
 - name: "Add Full Backup Cronjob"

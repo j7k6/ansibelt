@@ -11,6 +11,7 @@
   - setup:
 
   roles:
+    - backup
     - base
     - firewall
     - unattended-upgrades
@@ -18,7 +19,6 @@
     - postfix
     - mosh
     - hardening
-    - backup
 
   tasks:
     - name: "Send Mail after Bootstrap"
