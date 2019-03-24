@@ -1,0 +1,82 @@
+---
+
+- name: "Install Duplicity (Debian)"
+  block:
+  - name: "Add Backports Repository"
+    apt_repository:
+      repo: "deb http://deb.debian.org/debian {{ansible_distribution_release}}-backports main"
+      filename: "{{ansible_distribution_release}}-backports"
+      update_cache: yes
+
+  - name: "Install Packages"
+    apt:
+      name: "{{packages}}"
+      default_release: "{{ansible_distribution_release}}-backports"
+    vars:
+      packages:
+        - duplicity
+        - duply
+  when: ansible_distribution == "Debian"
+
+- name: "Install Duplicity (Ubuntu)"
+  block:
+  - name: "Add Duplicity PPA"
+    apt_repository:
+      repo: "ppa:duplicity-team/ppa"
+      update_cache: yes
+    when: ansible_distribution == "Ubuntu"
+
+  - name: "Install Packages"
+    apt:
+      name: "{{packages}}"
+    vars:
+      packages:
+        - duplicity
+        - duply
+  when: ansible_distribution == "Ubuntu"
+
+- name: "Copy GPG Template"
+  template:
+    src: "gpg_template.j2"
+    dest: "/tmp/gpg_template"
+    force: yes
+
+- name: "Check if Key ID exists"
+  command: "gpg2 --list-secret-keys backup@{{ansible_hostname}} 2>/dev/null || true"
+  ignore_errors: yes
+  register: gpg_key_exists
+
+- name: "Generate GPG Key Pair"
+  command: 'gpg2 --batch --gen-key /tmp/gpg_template'
+  when: gpg_key_exists.stdout == ""
+
+- name: "Register GPG Key ID"
+  shell: "gpg2 --list-keys --keyid-format=short backup@{{ansible_hostname}} | awk '/^pub/ {print $2}' | awk -F/ '{print $2}' 2>/dev/null"
+  ignore_errors: yes
+  register: gpg_key_id
+
+- name: "Generate Duply Config"
+  command: "duply {{backup}} create"
+  ignore_errors: yes
+
+- name: "Copy excludes"
+  copy:
+    src: "excludes"
+    dest: "/root/.duply/{{backup}}/excludes"
+    force: yes
+
+- name: "Add Full Backup Cronjob"
+  cron:
+    name: "Duplicity Full Backup"
+    minute: "0"
+    hour: "0"
+    weekday: "6"
+    job: "/usr/bin/duply {{backup}} full_verify_purge --force >/var/log/duply.log 2>&1"
+
+- name: "Add Incremental Backup Cronjob"
+  cron:
+    name: "Duplicity Incremental Backup"
+    minute: "0"
+    hour: "0"
+    weekday: "0-5"
+    job: "/usr/bin/duply {{backup}} incr >/var/log/duply.log 2>&1"

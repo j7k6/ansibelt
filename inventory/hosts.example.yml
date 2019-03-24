@@ -10,6 +10,9 @@
 #     test.example.com:
 #       ansible_host: "203.0.113.10"
 #       ansible_user: "ansible"
+#       backblaze_account_id: "8bf7dc1b8b"
+#       backblaze_application_key: "c02b7d24a066adb747fdeb12deb21bfa"
+#       backup: "b2"
 #       sites:
 #         - { server_name: ["example.com", "*.example.com"], cloudflare_zone: "example.com" }
 #         - { server_name: ["staging.example.com"],

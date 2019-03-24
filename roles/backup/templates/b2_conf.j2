@@ -1,0 +1,9 @@
+GPG_KEY="{{gpg_key_id.stdout}}"
+GPG_PW=""
+
+SOURCE="/"
+TARGET="b2://{{backblaze_account_id}}:{{backblaze_application_key}}@backup-{{ansible_hostname}}-{{hostid.stdout}}"
+
+MAX_AGE=1M
+MAX_FULL_BACKUPS=4
+MAX_FULLS_WITH_INCRS=1

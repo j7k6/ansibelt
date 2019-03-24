@@ -1,0 +1,6 @@
+- /proc/*
+- /sys/*
+- /dev/*
+- /mnt/*
+- /tmp/*
+- /var/cache/*

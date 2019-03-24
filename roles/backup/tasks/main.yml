@@ -1,0 +1,10 @@
+---
+
+- name: "Duplicity"
+  include: duplicity.yml
+  when: backup is defined
+
+- name: "Backblaze B2 Backup"
+  include: b2.yml
+  when: backup == "b2" and backblaze_account_id is defined and backblaze_application_key is defined
+  

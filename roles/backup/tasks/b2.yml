@@ -1,0 +1,15 @@
+---
+
+- name: "Install B2 Python Package"
+  pip:
+    name: "b2"
+
+- name: "Register HostID"
+  command: "hostid"
+  register: hostid
+
+- name: "Copy B2 Template"
+  template:
+    src: "b2_conf.j2"
+    dest: "/root/.duply/b2/conf"
+    force: yes

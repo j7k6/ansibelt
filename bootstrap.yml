@@ -11,6 +11,7 @@
   - setup:
 
   roles:
+    - backup
     - base
     - firewall
     - unattended-upgrades
