@@ -24,7 +24,6 @@
     apt_repository:
       repo: "ppa:duplicity-team/ppa"
       update_cache: yes
-    when: ansible_distribution == "Ubuntu"
 
   - name: "Install Packages"
     apt:
