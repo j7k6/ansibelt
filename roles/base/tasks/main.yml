@@ -34,6 +34,7 @@
       - git
       - gnupg2
       - logwatch
+      - net-tools
       - ntp
       - open-vm-tools
       - python-openssl
